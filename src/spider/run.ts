@@ -46,6 +46,8 @@ const getCandidateEmail = async (): Promise<void> => {
         });
     } catch (err) {
         console.log(err);
+
+        await getCandidateEmail();
     }
 };
 

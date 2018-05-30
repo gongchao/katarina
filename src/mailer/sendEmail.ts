@@ -1,8 +1,7 @@
-import {createTransport} from 'nodemailer';
 import config from '../config';
-import {createSendMailTemplate} from './template';
 import Storage from '../storage';
-import getSocketProxy, {shiftPool} from '../socket';
+import {shiftPool} from '../socket';
+import * as Transport from './transports';
 
 type Candidate = {
     name: string,
@@ -10,36 +9,9 @@ type Candidate = {
     email: string,
 };
 
-// const sleep = (time: number): Promise<void> => new Promise(resolve => {
-//     setTimeout(() => resolve(), time);
-// });
-
-const transporter = createTransport(config.email.sender);
-
-if (config.proxyURL) {
-    (transporter as any).getSocket = function (options: any, callback: any): void {
-        getSocketProxy(options).then((socket: any) => {
-            callback(null, {
-                connection: socket,
-                tls: {
-                    rejectUnauthorized: true,
-                }
-            });
-        }).catch(err => callback(err));
-    };
+function sendEmailHelper(candidate: Candidate) {
+    return (<any> Transport)[config.email.transport || 'smtp']()(candidate);
 }
-
-const sendEmailHelper = (candidate: Candidate) => {
-    return new Promise((resolve, reject) => {
-        transporter.sendMail(createSendMailTemplate(candidate.email, candidate.name), (err, info) => {
-            (<any> process).send(`给[${candidate.github}]发送邮件 错误状态: ${JSON.stringify(err)}`);
-
-            if (err) return reject(err);
-
-            return resolve(info);
-        });
-    });
-};
 
 const sendEmail = async () => {
     try {

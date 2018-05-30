@@ -7,7 +7,7 @@ export default {
     email: {
         emailAddress: '',
 
-        sender: {
+        smtpConfig: {
             host: 'smtp.exmail.qq.com',
             port: 465,
             secure: true,
@@ -15,7 +15,7 @@ export default {
                 user: '',
                 pass: '',
             },
-        }
+        },
     },
 
     proxyURL: ''

@@ -1,12 +1,23 @@
 type configObject = { [key: string]: any };
 
+type httpConfig = {
+    url: string,
+    appId: string,
+    [key: string]: any,
+};
+
 type config = {
     redis: configObject,
 
     email: {
-        emailAddress: string,
+        transport?: 'smtp' | 'http',
 
-        sender: configObject,
+        emailAddress: string,
+        replyAddress?: string,
+
+        httpConfig?: httpConfig,
+
+        smtpConfig?: configObject,
     },
 
     proxyURL: string,
